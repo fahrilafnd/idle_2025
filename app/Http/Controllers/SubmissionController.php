@@ -21,11 +21,11 @@ class SubmissionController extends Controller
             abort(404);
         }
         if ($tim->babak == 1) {
-            return view('pages.submission_1', compact('kategoris','kategori', 'tim'));
-        } elseif ($tim->babak == 2){
-            return view('pages.submission_2', compact('kategoris','kategori', 'tim'));
+            return view('pages.submission_1', compact('kategoris', 'kategori', 'tim'));
+        } elseif ($tim->babak == 2) {
+            return view('pages.submission_2', compact('kategoris', 'kategori', 'tim'));
         } else {
-            return view('pages.submission_3', compact('kategoris','kategori', 'tim'));
+            return view('pages.submission_3', compact('kategoris', 'kategori', 'tim'));
         }
         return $tim;
         return $token;
@@ -34,69 +34,69 @@ class SubmissionController extends Controller
 
     public function submitFile(Request $request, $token)
     {
-        $kategoris = Kategori::get();
         $tim = Tim::with('kategori')
-            ->where('submissionid', $token)->get()->first();
-        if ($tim == null) {
+            ->where('submissionid', $token)->first();
+        if (!$tim) {
             abort(404);
         }
 
-        if($tim->babak == 1){
-            $val_data = $request->validate([
-                'file' => 'required|mimes:pdf,zip,rar'
-            ]);
+        // Validasi file
+        $val_data = $request->validate([
+            'file' => 'required|file|max:5120|mimes:pdf,zip,rar', // max 5MB
+            'judul' => 'required|string|max:255',
+        ]);
 
-            $path = "submission-1";
+        // Tentukan folder berdasarkan babak
+        if ($tim->babak == 1) {
+            $folder = "submission-1";
+            $file = $request->file('file');
+            $filename = basename($file->getClientOriginalName()); // hanya nama file, bersih dari "/"
+            $path = $file->storeAs($folder, $filename); // simpan file
 
-            $sub = Submission::createSubmissionPenyisihan1($tim->id, $request->judul, $path, $token, $request->file('file'));
+            $sub = Submission::createSubmissionPenyisihan1(
+                $tim->id,
+                $request->judul,
+                $folder,    // simpan folder saja
+                $token,
+                $filename   // nama file murni
+            );
+        } elseif ($tim->babak == 2) {
+            $folder = "submission-2";
+            $file = $request->file('file');
+            $filename = $file ? basename($file->getClientOriginalName()) : null;
 
-            if($sub){
-                return redirect('/')->with('success', 'Upload Berhasil');
-            } else{
-                return redirect()->back()->with('error', 'Upload Gagal');
+            $data = json_encode(['link' => $request->link]);
+            $sub = Submission::createSubmissionPenyisihan2(
+                $tim->id,
+                $request->judul,
+                $folder,
+                $data,
+                $token,
+                $filename
+            );
+
+            if ($file) {
+                $file->storeAs($folder, $filename);
             }
-        } elseif ($tim->babak == 2){
-            if($tim->id_kategori == 2) {
-                $data = json_encode(['link' => $request->link]);
-                $path = json_encode(['link2' => $request->link2]);
-    
-                $sub = Submission::createSubmissionPenyisihan2($tim->id, $request->judul, $path, $data, $token);
-                if($sub){
-                    return redirect('/')->with('success', 'Upload Berhasil');
-                } else{
-                    return redirect()->back()->with('error', 'Upload Gagal');
-                }
-            } else {
-                $val_data = $request->validate([
-                'file' => 'required|mimes:zip,pdf'
-                ]);
-    
-                $data = json_encode(['link' => $request->link]);
-    
-                $path = "submission-2";
-    
-                $sub = Submission::createSubmissionPenyisihan2($tim->id, $request->judul, $path, $data, $token, $request->file('file'));
-                if($sub){
-                    return redirect('/')->with('success', 'Upload Berhasil');
-                } else{
-                    return redirect()->back()->with('error', 'Upload Gagal');
-                }
-            }
+        } else { // final
+            $folder = "submission-final";
+            $file = $request->file('file');
+            $filename = basename($file->getClientOriginalName());
+            $path = $file->storeAs($folder, $filename);
 
+            $sub = Submission::createSubmissionFinal(
+                $tim->id,
+                $request->judul,
+                $folder,
+                $token,
+                $filename
+            );
+        }
+
+        if ($sub) {
+            return redirect('/')->with('success', 'Upload Berhasil');
         } else {
-            $val_data = $request->validate([
-                'file' => 'required|mimes:zip,pdf'
-            ]);
-
-            $path = "submission-final";
-
-            $sub = Submission::createSubmissionFinal($tim->id, $request->judul, $path, $token, $request->file('file'));
-
-            if($sub){
-                return redirect('/')->with('success', 'Upload Berhasil');
-            } else{
-                return redirect()->back()->with('error', 'Upload Gagal');
-            }
+            return redirect()->back()->with('error', 'Upload Gagal');
         }
     }
 }
