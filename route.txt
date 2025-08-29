@@ -1,0 +1,56 @@
++--------+-----------+------------------------------------------+----------------------------+------------------------------------------------------------------------+-----------------+
+| Domain | Method    | URI                                      | Name                       | Action                                                                 | Middleware      |
++--------+-----------+------------------------------------------+----------------------------+------------------------------------------------------------------------+-----------------+
+|        | GET|HEAD  | /                                        |                            | Closure                                                                | web             |
+|        | GET|HEAD  | admin                                    | admin.dashboard            | App\Http\Controllers\Admin\AdminController@index                       | web,auth        |
+|        | GET|HEAD  | admin/ajax/download/{path}               | admin.ajax.download        | App\Http\Controllers\Admin\AjaxController@downloadFile                 | web,auth        |
+|        | GET|HEAD  | admin/ajax/final/{kategori}              | admin.ajax.final           | App\Http\Controllers\Admin\AjaxController@getFinalTim                  | web,auth        |
+|        | GET|HEAD  | admin/ajax/penyisihan-1/{kategori}       | admin.ajax.penyisihan1     | App\Http\Controllers\Admin\AjaxController@getPenyisihan1Tim            | web,auth        |
+|        | GET|HEAD  | admin/ajax/penyisihan-2/{kategori}       | admin.ajax.penyisihan2     | App\Http\Controllers\Admin\AjaxController@getPenyisihan2Tim            | web,auth        |
+|        | GET|HEAD  | admin/final/create/{kategori}            | admin.final.create         | App\Http\Controllers\Admin\KompetisiFinal@create                       | web,auth,ormawa |
+|        | POST      | admin/final/down/{kategori}/{tim}        | admin.final.destroy        | App\Http\Controllers\Admin\KompetisiFinal@destroy                      | web,auth,ormawa |
+|        | POST      | admin/final/store/{kategori}             | admin.final.store          | App\Http\Controllers\Admin\KompetisiFinal@store                        | web,auth,ormawa |
+|        | POST      | admin/final/update/{kategori}            | admin.final.update         | App\Http\Controllers\Admin\KompetisiFinal@update                       | web,auth,ormawa |
+|        | GET|HEAD  | admin/final/{kategori}                   | admin.final.index          | App\Http\Controllers\Admin\KompetisiFinal@index                        | web,auth,ormawa |
+|        | POST      | admin/mahasiswa                          | admin.mahasiswa.store      | App\Http\Controllers\Admin\MahasiswaController@store                   | web,auth        |
+|        | GET|HEAD  | admin/mahasiswa                          | admin.mahasiswa.index      | App\Http\Controllers\Admin\MahasiswaController@index                   | web,auth        |
+|        | GET|HEAD  | admin/mahasiswa/create                   | admin.mahasiswa.create     | App\Http\Controllers\Admin\MahasiswaController@create                  | web,auth        |
+|        | DELETE    | admin/mahasiswa/{mahasiswa}              | admin.mahasiswa.destroy    | App\Http\Controllers\Admin\MahasiswaController@destroy                 | web,auth        |
+|        | GET|HEAD  | admin/mahasiswa/{mahasiswa}              | admin.mahasiswa.show       | App\Http\Controllers\Admin\MahasiswaController@show                    | web,auth        |
+|        | PUT|PATCH | admin/mahasiswa/{mahasiswa}              | admin.mahasiswa.update     | App\Http\Controllers\Admin\MahasiswaController@update                  | web,auth        |
+|        | GET|HEAD  | admin/mahasiswa/{mahasiswa}/edit         | admin.mahasiswa.edit       | App\Http\Controllers\Admin\MahasiswaController@edit                    | web,auth        |
+|        | GET|HEAD  | admin/penyisihan-1/create/{kategori}     | admin.penyisihan-1.create  | App\Http\Controllers\Admin\KompetisiPenyisihan1@create                 | web,auth,ormawa |
+|        | POST      | admin/penyisihan-1/destroy/{tim}         | admin.tim.destroy          | App\Http\Controllers\Admin\KompetisiPenyisihan1@destroy                | web,auth        |
+|        | POST      | admin/penyisihan-1/store/{kategori}      | admin.penyisihan-1.store   | App\Http\Controllers\Admin\KompetisiPenyisihan1@store                  | web,auth,ormawa |
+|        | POST      | admin/penyisihan-1/update/{kategori}     | admin.penyisihan-1.update  | App\Http\Controllers\Admin\KompetisiPenyisihan1@update                 | web,auth,ormawa |
+|        | GET|HEAD  | admin/penyisihan-1/{kategori}            | admin.penyisihan-1.index   | App\Http\Controllers\Admin\KompetisiPenyisihan1@index                  | web,auth,ormawa |
+|        | GET|HEAD  | admin/penyisihan-2/create/{kategori}     | admin.penyisihan-2.create  | App\Http\Controllers\Admin\KompetisiPenyisihan2@create                 | web,auth,ormawa |
+|        | POST      | admin/penyisihan-2/down/{kategori}/{tim} | admin.penyisihan-2.destroy | App\Http\Controllers\Admin\KompetisiPenyisihan2@destroy                | web,auth,ormawa |
+|        | POST      | admin/penyisihan-2/store/{kategori}      | admin.penyisihan-2.store   | App\Http\Controllers\Admin\KompetisiPenyisihan2@store                  | web,auth,ormawa |
+|        | POST      | admin/penyisihan-2/update/{kategori}     | admin.penyisihan-2.update  | App\Http\Controllers\Admin\KompetisiPenyisihan2@update                 | web,auth,ormawa |
+|        | GET|HEAD  | admin/penyisihan-2/{kategori}            | admin.penyisihan-2.index   | App\Http\Controllers\Admin\KompetisiPenyisihan2@index                  | web,auth,ormawa |
+|        | GET|HEAD  | admin/post                               | admin.post.index           | App\Http\Controllers\Admin\PostController@index                        | web,auth        |
+|        | GET|HEAD  | admin/post/create                        | admin.post.create          | App\Http\Controllers\Admin\PostController@create                       | web,auth        |
+|        | POST      | admin/post/destroy/{post}                | admin.post.destroy         | App\Http\Controllers\Admin\PostController@destroy                      | web,auth        |
+|        | POST      | admin/post/store                         | admin.post.store           | App\Http\Controllers\Admin\PostController@store                        | web,auth        |
+|        | POST      | admin/post/update/{post}                 | admin.post.update          | App\Http\Controllers\Admin\PostController@update                       | web,auth        |
+|        | GET|HEAD  | admin/post/{post}/edit                   | admin.post.edit            | App\Http\Controllers\Admin\PostController@edit                         | web,auth        |
+|        | GET|HEAD  | api/user                                 |                            | Closure                                                                | api,auth:api    |
+|        | GET|HEAD  | kompetisi/{kategori}                     | kompetisi.index            | App\Http\Controllers\KompetisiController@getPagesByCategory            | web             |
+|        | GET|HEAD  | kompetisi/{kategori}/daftar              | kompetisi.daftar           | App\Http\Controllers\KompetisiController@getPageDaftar                 | web             |
+|        | GET|HEAD  | kompetisi/{kategori}/peserta             | kompetisi.peserta          | App\Http\Controllers\KompetisiController@getPagePeserta                | web             |
+|        | POST      | kompetisi/{kategori}/store               | kompetisi.store            | App\Http\Controllers\Admin\KompetisiPenyisihan1@store                  | web             |
+|        | GET|HEAD  | kompetisi/{kategori}/submit              | kompetisi.submit.index     | App\Http\Controllers\SubmissionController@getPageSubmit                | web             |
+|        | GET|HEAD  | kompetisi/{kategori}/submit/store        | kompetisi.submit.store     | App\Http\Controllers\SubmissionController@submitFile                   | web             |
+|        | GET|HEAD  | login                                    | login                      | App\Http\Controllers\Auth\LoginController@showLoginForm                | web,guest       |
+|        | POST      | login                                    |                            | App\Http\Controllers\Auth\LoginController@login                        | web,guest       |
+|        | POST      | logout                                   | logout                     | App\Http\Controllers\Auth\LoginController@logout                       | web             |
+|        | POST      | password/email                           | password.email             | App\Http\Controllers\Auth\ForgotPasswordController@sendResetLinkEmail  | web,guest       |
+|        | GET|HEAD  | password/reset                           | password.request           | App\Http\Controllers\Auth\ForgotPasswordController@showLinkRequestForm | web,guest       |
+|        | POST      | password/reset                           | password.update            | App\Http\Controllers\Auth\ResetPasswordController@reset                | web,guest       |
+|        | GET|HEAD  | password/reset/{token}                   | password.reset             | App\Http\Controllers\Auth\ResetPasswordController@showResetForm        | web,guest       |
+|        | GET|HEAD  | post/{post}                              | post.show                  | App\Http\Controllers\Admin\PostController@show                         | web             |
+|        | GET|HEAD  | register                                 |                            | Closure                                                                | web             |
+|        | POST      | register                                 |                            | App\Http\Controllers\Auth\RegisterController@register                  | web,guest       |
+|        | GET|HEAD  | test                                     |                            | Closure                                                                | web             |
++--------+-----------+------------------------------------------+----------------------------+------------------------------------------------------------------------+-----------------+

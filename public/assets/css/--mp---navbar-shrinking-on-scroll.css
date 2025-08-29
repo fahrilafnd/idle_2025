@@ -1,0 +1,38 @@
+#brand-logo {
+  width: 180px;
+}
+
+.bg-dark {
+  min-height: 120px;
+  transition: .30s all ease-in;
+  background: transparent;
+}
+
+@media only screen and (max-width: 880px) {
+  .bg-dark {
+    min-height: 120px;
+    transition: .30s all ease-in;
+    background: white !important;
+  }
+  div#navcol-1.navbar-collapse.collapse{
+    background: white !important;
+    color: red;
+    }
+}
+
+.bg-dark.scrolled {
+  /*color: black;*/
+  min-height: 60px;
+  transition: .45s all ease-out;
+  background: white;
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+.navitem, .nav-link {
+  color: var(--primer);
+  font-size: 1.2rem;
+}
+
+.navitem:hover {
+  color: var(--primer);
+}
