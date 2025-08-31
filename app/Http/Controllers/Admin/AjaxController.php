@@ -125,37 +125,25 @@ class AjaxController extends Controller
     }
 
     public function downloadFile($id)
-{
-    $file = Submission::with('tim.kategori')
-        ->where('token', $id)
-        ->orderBy('created_at', 'desc')
-        ->first();
+    {
+        $file = Submission::with('tim.kategori')
+            ->where('token', $id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->first();
 
-    if (!$file) {
+        if ($file == null) {
+            return redirect()->back()->with('error', 'File not found');
+        }
+
+        $file_path = public_path() . '/uploads/' . $file->file_path;
+        if (file_exists($file_path)) {
+            $name = $file->tim->kategori->nama_kategori . '_' . $file->tim->nama_tim . '_' . $file->judul . '.' . pathinfo($file_path, PATHINFO_EXTENSION);
+            return Response::download($file_path, $name);
+        }
+
         return redirect()->back()->with('error', 'File not found');
     }
-
-    $file_path = public_path('uploads/' . $file->file_path);
-
-    if (!file_exists($file_path)) {
-        return redirect()->back()->with('error', 'File not found');
-    }
-
-    // Bangun nama file download
-    $rawName = $file->tim->kategori->nama_kategori . '_' .
-               $file->tim->nama_tim . '_' .
-               $file->judul . '.' .
-               pathinfo($file_path, PATHINFO_EXTENSION);
-
-    // Sanitasi nama file biar aman
-    $safeName = preg_replace('/[\/\\\\%]+/', '_', $rawName);          // ganti /, \, %
-    $safeName = preg_replace('/[^\x20-\x7e]/', '', $safeName);        // buang non-ASCII
-    $safeName = preg_replace('/[^A-Za-z0-9_\-\. ]/', '_', $safeName); // karakter aneh → _
-
-    return Response::download($file_path, $safeName);
-}
-
-
 
     public function getTimsData()
     {
