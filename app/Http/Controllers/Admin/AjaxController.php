@@ -30,7 +30,7 @@ class AjaxController extends Controller
         $data = Tim::with('mahasiswa', 'pesertas.mahasiswa', 'submissions')
             ->where('id_kategori', $kategori)
             ->where('babak', '=', 1)
-//            ->orderBy('created_at', 'desc')
+            //            ->orderBy('created_at', 'desc')
             ->get();
         $index = 1;
         foreach ($data as $d) {
@@ -55,7 +55,7 @@ class AjaxController extends Controller
         $data = Tim::with('mahasiswa', 'pesertas.mahasiswa', 'submissions')
             ->where('id_kategori', $kategori)
             ->where('babak', '=', 2)
-//            ->orderBy('created_at', 'desc')
+            //            ->orderBy('created_at', 'desc')
             ->get();
         $index = 1;
         foreach ($data as $d) {
@@ -80,7 +80,7 @@ class AjaxController extends Controller
         $data = Tim::with('mahasiswa', 'pesertas.mahasiswa')
             ->where('id_kategori', $kategori)
             ->where('babak', '=', 3)
-//            ->orderBy('created_at', 'desc')
+            //            ->orderBy('created_at', 'desc')
             ->get();
         $index = 1;
         foreach ($data as $d) {
@@ -129,21 +129,34 @@ class AjaxController extends Controller
         $file = Submission::with('tim.kategori')
             ->where('token', $id)
             ->orderBy('created_at', 'desc')
-            ->get()
             ->first();
 
-        if ($file == null) {
+        if (!$file) {
             return redirect()->back()->with('error', 'File not found');
         }
 
-        $file_path = public_path() . '/uploads/' . $file->file_path;
-        if (file_exists($file_path)) {
-            $name = $file->tim->kategori->nama_kategori . '_' . $file->tim->nama_tim . '_' . $file->judul . '.' . pathinfo($file_path, PATHINFO_EXTENSION);
-            return Response::download($file_path, $name);
+        $file_path = public_path('uploads/' . $file->file_path);
+
+        if (!file_exists($file_path)) {
+            return redirect()->back()->with('error', 'File not found');
         }
 
-        return redirect()->back()->with('error', 'File not found');
+        // Ambil ekstensi
+        $extension = pathinfo($file_path, PATHINFO_EXTENSION);
+
+        // Gabungkan nama file
+        $name = $file->tim->kategori->nama_kategori . '_' . $file->tim->nama_tim . '_' . $file->judul;
+
+        // Replace karakter ilegal dengan underscore
+        $name = preg_replace('/[\/\\\:\*\?"<>\|]/', '_', $name);
+
+        // Tambahkan ekstensi
+        $name .= '.' . $extension;
+
+        return response()->download($file_path, $name);
     }
+
+
 
     public function getTimsData()
     {
@@ -164,7 +177,7 @@ class AjaxController extends Controller
 
     public function getMahasiswasData()
     {
-        $_angkatan = ['2018', '2019', '2020', '2021','2022','2023'];
+        $_angkatan = ['2018', '2019', '2020', '2021', '2022', '2023'];
         $_prodi = ['Sistem Informasi', 'Teknologi Informasi', 'Informatika'];
 
         $mahasiswas = Mahasiswa::get();
@@ -207,9 +220,10 @@ class AjaxController extends Controller
         return $status == true ? 1 : 0;
     }
 
-    public function getImages(){
+    public function getImages()
+    {
         $images = PostImage::get();
-        foreach ($images as $image){
+        foreach ($images as $image) {
             $image->url = URL::to('/') . $image->url;
         }
 
